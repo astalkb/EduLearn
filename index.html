@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduLearn - E-Learning Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home">EduLearn</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#quizzes">Quiz</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#blog">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#projects">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#profile">Profile</a>
+                    </li>
+                </ul>
+                <div class="dark-mode-toggle me-3">
+                    <button class="btn btn-light" id="darkModeToggle">
+                        <i class="bi bi-sun-fill" id="darkModeIcon"></i>
+                    </button>
+                </div>
+                <div class="d-flex" id="authButtons">
+                    <button class="btn btn-light me-2" onclick="showLoginModal()">Login</button>
+                    <button class="btn btn-outline-light" onclick="showRegisterModal()">Register</button>
+                </div>
+                <div class="d-none" id="userProfile">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                            <span id="username">User</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content-wrapper">
+        <section id="home" class="section">
+            <div class="container py-5">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h1>Welcome to EduLearn</h1>
+                        <p class="lead">Your journey to knowledge starts here. Take quizzes, read articles, and track your progress.</p>
+                        <button class="btn btn-primary btn-lg" onclick="showRegisterModal()">Get Started</button>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="image/learning.webp" alt="Learning" class="img-fluid rounded">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="quizzes" class="section bg-light">
+            <div class="container py-5">
+                <h2 class="text-center mb-5">Available Quizzes</h2>
+                <div class="row" id="quizList">
+                </div>
+            </div>
+        </section>
+
+        <section id="blog" class="section">
+            <div class="container py-5">
+                <h2 class="text-center mb-5">Latest Articles</h2>
+                <div class="row" id="blogPosts">
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="section bg-light">
+            <div class="container py-5">
+                <h2 class="text-center mb-5">Featured Projects</h2>
+                <div class="row" id="projectsList">
+                </div>
+            </div>
+        </section>
+
+        <section id="profile" class="section bg-light d-none">
+            <div class="container py-5">
+                <h2>My Profile</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title" id="profileName">User Name</h5>
+                                <p class="card-text" id="profileEmail">user@example.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <h3>Quiz History</h3>
+                        <div id="quizHistory">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                            <div class="mt-2">
+                                <a href="#" onclick="showForgotPasswordModal()">Forgot Password?</a>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Register</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="registerName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="registerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="registerUsername" required>
+                            <div class="form-text">Username must be unique and contain only letters, numbers, and underscores.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="registerEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerPassword" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="registerPassword" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-requirements mt-2">
+                                <p class="mb-1 small">Password must contain:</p>
+                                <ul class="list-unstyled small">
+                                    <li id="lengthCheck"><i class="bi bi-x-circle text-danger"></i> At least 8 characters</li>
+                                    <li id="upperCheck"><i class="bi bi-x-circle text-danger"></i> One uppercase letter</li>
+                                    <li id="lowerCheck"><i class="bi bi-x-circle text-danger"></i> One lowercase letter</li>
+                                    <li id="numberCheck"><i class="bi bi-x-circle text-danger"></i> One number</li>
+                                    <li id="specialCheck"><i class="bi bi-x-circle text-danger"></i> One special character</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="registerSubmit">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="quizModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="quizTitle">Quiz</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="quizContent">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="resetStep1">
+                        <form id="forgotPasswordForm">
+                            <div class="mb-3">
+                                <label for="resetEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="resetEmail" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                        </form>
+                    </div>
+                    <div id="resetStep2" class="d-none">
+                        <form id="resetPasswordForm">
+                            <div class="mb-3">
+                                <label for="resetCode" class="form-label">Reset Code</label>
+                                <input type="text" class="form-control" id="resetCode" required>
+                                <div class="form-text">Enter the code sent to your email</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="newPassword" required>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="app.togglePasswordVisibility('newPassword')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-requirements mt-2">
+                                    <p class="mb-1 small">Password must contain:</p>
+                                    <ul class="list-unstyled small">
+                                        <li id="resetPasswordLength"><i class="bi bi-x-circle text-danger"></i> At least 8 characters</li>
+                                        <li id="resetPasswordUpper"><i class="bi bi-x-circle text-danger"></i> One uppercase letter</li>
+                                        <li id="resetPasswordLower"><i class="bi bi-x-circle text-danger"></i> One lowercase letter</li>
+                                        <li id="resetPasswordNumber"><i class="bi bi-x-circle text-danger"></i> One number</li>
+                                        <li id="resetPasswordSpecial"><i class="bi bi-x-circle text-danger"></i> One special character</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="confirmNewPassword" required>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="app.togglePasswordVisibility('confirmNewPassword')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="resetPasswordSubmit">Reset Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/blog.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

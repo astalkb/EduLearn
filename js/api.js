@@ -519,7 +519,7 @@ const ApiService = {
                     id: 3,
                     title: "PSUSphere",
                     description: "PSUSphere represents a cutting-edge web application designed specifically for Palawan State University's digital ecosystem. This platform goes beyond basic social networking by integrating academic tools, event management, and community engagement features. Students can access course materials, participate in academic discussions, and stay updated with university events. The platform includes features for department announcements, club activities, and academic calendar integration, creating a comprehensive digital hub for university life.",
-                    image: "https://picsum.photos/seed/psu/600/400",
+                    image: "image/PSUSphere.png",
                     technologies: ["Python", "Django", "Bootstrap", "SQLite"],
                     link: "https://github.com/astalkb/PSUSphere"
                 },

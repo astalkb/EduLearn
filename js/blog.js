@@ -29,7 +29,7 @@ class BlogHandler {
                             <small class="text-muted">By ${post.author}</small>
                             <small class="text-muted">${post.date}</small>
                         </div>
-                        <button class="btn btn-primary mt-3" onclick="blogHandler.showPost(${post.id})">
+                        <button class="btn btn-primary mt-3 w-100" onclick="blogHandler.showPost(${post.id})">
                             Read More
                         </button>
                     </div>
@@ -54,11 +54,11 @@ class BlogHandler {
         blogPosts.innerHTML = `
             <div class="col-12">
                 <div class="blog-post">
-                    <button class="btn btn-secondary mb-4" onclick="blogHandler.loadPosts()">
-                        Back to Posts
+                    <button class="btn btn-outline-secondary mb-4" onclick="blogHandler.loadPosts()">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Posts
                     </button>
-                    <img src="${post.image}" class="img-fluid rounded mb-4" alt="${post.title}">
-                    <h2>${post.title}</h2>
+                    <img src="${post.image}" class="img-fluid rounded mb-4" alt="${post.title}" style="width: 100%; height: 400px; object-fit: cover;">
+                    <h2 class="mb-3">${post.title}</h2>
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <small class="text-muted">By ${post.author}</small>
                         <small class="text-muted">${post.date}</small>
@@ -81,7 +81,7 @@ class BlogHandler {
         if (!auth.isAuthenticated()) {
             return `
                 <div class="mt-4">
-                    <h4>Comments</h4>
+                    <h4 class="mb-3">Comments</h4>
                     <p>Please <a href="#" onclick="showLoginModal()">login</a> to leave a comment.</p>
                     <div id="comments" class="mt-4">
                     </div>
@@ -91,13 +91,13 @@ class BlogHandler {
 
         return `
             <div class="mt-4">
-                <h4>Comments</h4>
+                <h4 class="mb-3">Comments</h4>
                 <form id="commentForm" onsubmit="blogHandler.submitComment(event)">
                     <div class="mb-3">
-                        <textarea class="form-control" id="commentText" rows="3" required 
+                        <textarea class="form-control" id="commentText" rows="4" required 
                             placeholder="Share your thoughts..."></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit Comment</button>
+                    <button type="submit" class="btn btn-primary">Post Comment</button>
                 </form>
                 <div id="comments" class="mt-4">
                 </div>
@@ -135,7 +135,7 @@ class BlogHandler {
     addComment(comment) {
         const comments = document.getElementById('comments');
         const commentElement = document.createElement('div');
-        commentElement.className = 'card mb-3';
+        commentElement.className = 'card';
 
         const currentUser = auth.getCurrentUser();
         const isAuthor = currentUser && currentUser.id === comment.userId;

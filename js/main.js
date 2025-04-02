@@ -21,12 +21,22 @@ class App {
         const hash = window.location.hash || '#home';
         const mainContent = document.querySelectorAll('#home, #quizzes, #blog, #projects');
         const profileSection = document.getElementById('profile');
+        const projectsSection = document.getElementById('projects');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+        });
         
         if (hash === '#profile') {
             mainContent.forEach(section => section.classList.add('d-none'));
             if (auth.isAuthenticated()) {
                 profileSection.classList.remove('d-none');
                 this.loadProfile();
+                const profileLink = document.querySelector('a[href="#profile"]');
+                if (profileLink) {
+                    profileLink.classList.add('active');
+                }
             } else {
                 window.location.hash = '#home';
                 showToast('Error', 'Please login to view profile');
@@ -36,6 +46,11 @@ class App {
             profileSection.classList.add('d-none');
             
             if (hash === '#projects') {
+                if (!auth.isAuthenticated()) {
+                    window.location.hash = '#home';
+                    showToast('Error', 'Please login to view projects');
+                    return;
+                }
                 this.loadProjects();
             } else if (hash === '#quizzes') {
                 quizHandler.loadQuizzes();
@@ -50,11 +65,31 @@ class App {
                 }
             }
         }
+
+
+        if (projectsSection) {
+            if (!auth.isAuthenticated()) {
+                projectsSection.classList.add('d-none');
+            }
+        }
     }
 
     handleScrollSpy() {
         const sections = document.querySelectorAll('.section');
         const navLinks = document.querySelectorAll('.nav-link');
+        const hash = window.location.hash || '#home';
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+
+        if (hash === '#profile') {
+            const profileLink = document.querySelector('a[href="#profile"]');
+            if (profileLink) {
+                profileLink.classList.add('active');
+            }
+            return;
+        }
         
         let currentSection = '';
         
@@ -67,7 +102,6 @@ class App {
         });
 
         navLinks.forEach(link => {
-            link.classList.remove('active');
             if (link.getAttribute('href') === `#${currentSection}`) {
                 link.classList.add('active');
             }
@@ -80,6 +114,7 @@ class App {
         
         if (auth.isAuthenticated()) {
             this.loadProfile();
+            this.loadProjects();
         }
 
         this.handleNavigation();
@@ -222,7 +257,6 @@ class App {
                 </div>
             `;
 
-
             this.initializeNewPasswordValidation();
             const quizHistory = JSON.parse(localStorage.getItem('quizHistory') || '[]');
             const quizHistoryElement = document.getElementById('quizHistory');
@@ -275,6 +309,114 @@ class App {
         }
     }
 
+    initializePasswordValidation() {
+        const registerPasswordInput = document.getElementById('registerPassword');
+        const registerTogglePassword = document.getElementById('togglePassword');
+        const registerSubmit = document.getElementById('registerSubmit');
+
+        if (registerPasswordInput && registerTogglePassword && registerSubmit) {
+            const registerRequirements = {
+                length: { regex: /.{8,}/, element: document.getElementById('lengthCheck') },
+                upper: { regex: /[A-Z]/, element: document.getElementById('upperCheck') },
+                lower: { regex: /[a-z]/, element: document.getElementById('lowerCheck') },
+                number: { regex: /[0-9]/, element: document.getElementById('numberCheck') },
+                special: { regex: /[!@#$%^&*(),.?":{}|<>]/, element: document.getElementById('specialCheck') }
+            };
+
+            registerTogglePassword.addEventListener('click', () => {
+                const type = registerPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                registerPasswordInput.setAttribute('type', type);
+                registerTogglePassword.querySelector('i').className = `bi bi-eye${type === 'password' ? '' : '-slash'}`;
+            });
+
+            registerPasswordInput.addEventListener('input', () => {
+                this.validatePassword(registerPasswordInput.value, registerRequirements, registerSubmit);
+            });
+        }
+
+
+
+        const newPasswordInput = document.getElementById('newPassword');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+
+        if (newPasswordInput && confirmPasswordInput && changePasswordBtn) {
+            const profileRequirements = {
+                length: { regex: /.{8,}/, element: document.getElementById('newPasswordLength') },
+                upper: { regex: /[A-Z]/, element: document.getElementById('newPasswordUpper') },
+                lower: { regex: /[a-z]/, element: document.getElementById('newPasswordLower') },
+                number: { regex: /[0-9]/, element: document.getElementById('newPasswordNumber') },
+                special: { regex: /[!@#$%^&*(),.?":{}|<>]/, element: document.getElementById('newPasswordSpecial') }
+            };
+
+            const validateProfilePassword = () => {
+                const password = newPasswordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                let isValid = this.validatePassword(password, profileRequirements, changePasswordBtn);
+                
+                if (password !== confirmPassword || !password || !confirmPassword) {
+                    isValid = false;
+                }
+                
+                changePasswordBtn.disabled = !isValid;
+            };
+
+            newPasswordInput.addEventListener('input', validateProfilePassword);
+            confirmPasswordInput.addEventListener('input', validateProfilePassword);
+        }
+
+
+        const resetPasswordInput = document.getElementById('newPassword');
+        const resetConfirmPasswordInput = document.getElementById('confirmNewPassword');
+        const resetPasswordSubmit = document.getElementById('resetPasswordSubmit');
+
+        if (resetPasswordInput && resetConfirmPasswordInput && resetPasswordSubmit) {
+            const resetRequirements = {
+                length: { regex: /.{8,}/, element: document.getElementById('resetPasswordLength') },
+                upper: { regex: /[A-Z]/, element: document.getElementById('resetPasswordUpper') },
+                lower: { regex: /[a-z]/, element: document.getElementById('resetPasswordLower') },
+                number: { regex: /[0-9]/, element: document.getElementById('resetPasswordNumber') },
+                special: { regex: /[!@#$%^&*(),.?":{}|<>]/, element: document.getElementById('resetPasswordSpecial') }
+            };
+
+            const validateResetPassword = () => {
+                const password = resetPasswordInput.value;
+                const confirmPassword = resetConfirmPasswordInput.value;
+                let isValid = this.validatePassword(password, resetRequirements, resetPasswordSubmit);
+                
+                if (password !== confirmPassword || !password || !confirmPassword) {
+                    isValid = false;
+                }
+                
+                resetPasswordSubmit.disabled = !isValid;
+            };
+
+            resetPasswordInput.addEventListener('input', validateResetPassword);
+            resetConfirmPasswordInput.addEventListener('input', validateResetPassword);
+        }
+    }
+
+    validatePassword(password, requirements, submitButton) {
+        let isValid = true;
+
+        Object.keys(requirements).forEach(req => {
+            const isRequirementMet = requirements[req].regex.test(password);
+            const element = requirements[req].element;
+            
+            if (element) {
+                element.querySelector('i').className = `bi bi-${isRequirementMet ? 'check-circle text-success' : 'x-circle text-danger'}`;
+            }
+            
+            if (!isRequirementMet) isValid = false;
+        });
+
+        if (submitButton) {
+            submitButton.disabled = !isValid;
+        }
+
+        return isValid;
+    }
+
     initializeNewPasswordValidation() {
         const newPasswordInput = document.getElementById('newPassword');
         const confirmPasswordInput = document.getElementById('confirmPassword');
@@ -293,26 +435,12 @@ class App {
         const validatePassword = () => {
             const password = newPasswordInput.value;
             const confirmPassword = confirmPasswordInput.value;
-            let isValid = true;
-
-            Object.keys(requirements).forEach(req => {
-                const isRequirementMet = requirements[req].regex.test(password);
-                const element = requirements[req].element;
-                
-                if (element) {
-                    element.innerHTML = `
-                        <i class="bi bi-${isRequirementMet ? 'check-circle text-success' : 'x-circle text-danger'}"></i>
-                        ${element.textContent.split('>').pop()}
-                    `;
-                }
-                
-                if (!isRequirementMet) isValid = false;
-            });
-
+            let isValid = this.validatePassword(password, requirements, changePasswordBtn);
+            
             if (password !== confirmPassword || !password || !confirmPassword) {
                 isValid = false;
             }
-
+            
             changePasswordBtn.disabled = !isValid;
         };
 
@@ -491,40 +619,22 @@ class App {
         });
     }
 
-    initializePasswordValidation() {
-        const passwordInput = document.getElementById('registerPassword');
-        const togglePassword = document.getElementById('togglePassword');
-        const registerSubmit = document.getElementById('registerSubmit');
+    updateUI() {
+        const authButtons = document.getElementById('authButtons');
+        const userProfile = document.getElementById('userProfile');
+        const username = document.getElementById('username');
+        const projectsNav = document.querySelector('a[href="#projects"]').parentElement;
 
-        const requirements = {
-            length: { regex: /.{8,}/, element: document.getElementById('lengthCheck') },
-            upper: { regex: /[A-Z]/, element: document.getElementById('upperCheck') },
-            lower: { regex: /[a-z]/, element: document.getElementById('lowerCheck') },
-            number: { regex: /[0-9]/, element: document.getElementById('numberCheck') },
-            special: { regex: /[!@#$%^&*(),.?":{}|<>]/, element: document.getElementById('specialCheck') }
-        };
-
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            togglePassword.querySelector('i').className = `bi bi-eye${type === 'password' ? '' : '-slash'}`;
-        });
-
-        passwordInput.addEventListener('input', () => {
-            const password = passwordInput.value;
-            let isValid = true;
-
-            Object.keys(requirements).forEach(req => {
-                const isRequirementMet = requirements[req].regex.test(password);
-                const element = requirements[req].element;
-                
-                element.querySelector('i').className = `bi bi-${isRequirementMet ? 'check-circle text-success' : 'x-circle text-danger'}`;
-                
-                if (!isRequirementMet) isValid = false;
-            });
-
-            registerSubmit.disabled = !isValid;
-        });
+        if (this.currentUser) {
+            authButtons.classList.add('d-none');
+            userProfile.classList.remove('d-none');
+            username.textContent = this.currentUser.name || 'User';
+            projectsNav.classList.remove('d-none');
+        } else {
+            authButtons.classList.remove('d-none');
+            userProfile.classList.add('d-none');
+            projectsNav.classList.add('d-none');
+        }
     }
 }
 
